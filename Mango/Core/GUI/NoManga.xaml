@@ -1,0 +1,18 @@
+﻿<Window x:Class="Mango.Core.GUI.NoManga"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="NoManga" Height="446" Width="675">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="Oxygen">
+                <Setter Property="TextElement.FontFamily" Value="pack://application,,,/Resources/#Oxygen" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Name="Content">
+        <Grid Height="105">
+            <Label Content="No Manga Downloaded!" Style="{DynamicResource Oxygen}" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label Content="Try searching for some by clicking search in the top right." Style="{DynamicResource Oxygen}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>
