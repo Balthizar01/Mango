@@ -14,7 +14,7 @@ $(document).ready(function() {
 	}
 	
 	function setImageTwo() {
-		$("#pp").fadeIn(800).attr('src', 'img/2.png').delay(2500).fadeOut(800, function() { setImageThree() });
+		$("#pp").fadeIn(800).attr('src', 'img/2.jpg').delay(2500).fadeOut(800, function() { setImageThree() });
 	}
 	
 	function setImageThree() {
