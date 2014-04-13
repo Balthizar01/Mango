@@ -8,18 +8,85 @@
             <Style x:Key="Oxygen">
                 <Setter Property="TextElement.FontFamily" Value="pack://application,,,/Resources/#Oxygen" />
             </Style>
+            <Style TargetType="Button"
+                   x:Key="ControlButton">
+                <Setter Property="Height"
+                        Value="30" />
+                <Setter Property="Width"
+                        Value="50" />
+                <Setter Property="Opacity"
+                        Value="0.4" />
+                <Setter Property="Panel.ZIndex"
+                        Value="5" />
+                <Setter Property="IsTabStop"
+                        Value="False" />
+                <Setter Property="Focusable"
+                        Value="True" />
+                <Setter Property="Background"
+                        Value="{DynamicResource WhiteBrush}" />
+                <Setter Property="Foreground"
+                        Value="{DynamicResource TextBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border BorderBrush="{TemplateBinding Background}"
+                                    Padding="1"
+                                    CornerRadius="4">
+                                <Grid Background="{TemplateBinding Background}">
+                                    <Label FontFamily="Marlett"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           FontSize="17"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center">
+                                        <ContentPresenter ContentSource="Content" />
+                                    </Label>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter Property="Opacity"
+                                            Value="1.0" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Controls:MetroWindow.Resources>
     <Controls:MetroWindow.WindowCommands>
         <Controls:WindowCommands>
             <Button Name="BackBtn" Content="Back" Click="BackBtn_Click" />
-            <Button Name="PreviousBtn" Content="Previous" Click="PreviousBtn_Click" />
-            <Button Name="NextBtn" Content="Next" Click="NextBtn_Click" />
         </Controls:WindowCommands>
     </Controls:MetroWindow.WindowCommands>
     <Grid>
         <Controls:ProgressRing Name="Loader" Canvas.ZIndex="3" IsActive="True"  Foreground="LightBlue" />
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" Width="Auto">
+        <Button x:Name="PART_BackButton" Click="PreviousBtn_Click"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"
+                                Style="{DynamicResource ControlButton}" Height="62" Margin="0,244,0,275">
+            <Path Width="16"
+                                  Height="18"
+                                  Canvas.Left="15.9063"
+                                  Canvas.Top="14.75"
+                                  Stretch="Fill"
+                                  Fill="{DynamicResource BlackBrush}"
+                                  Data="F1 M 22.6563,23.75L 24.6563,25.75L 31.9063,32.75L 25.4063,32.75L 15.9063,23.75L 25.4063,14.75L 31.9063,14.75L 24.6563,21.75L 22.6563,23.75 Z " />
+        </Button>
+        <Button x:Name="PART_ForwardButton" Click="NextBtn_Click"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Style="{DynamicResource ControlButton}" Height="62" Margin="0,244,0,275">
+            <Path Width="16"
+                                  Height="18"
+                                  Canvas.Left="15.9063"
+                                  Canvas.Top="14.75"
+                                  Stretch="Fill"
+                                  Fill="{DynamicResource BlackBrush}"
+                                  Data="F1 M 25.1563,23.75L 23.1563,21.75L 15.9063,14.75L 22.4063,14.75L 31.9063,23.75L 22.4063,32.75L 15.9063,32.75L 23.1563,25.75L 25.1563,23.75 Z " />
+        </Button>
+        <ScrollViewer Name="Scroller" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" Width="Auto">
             <Grid Name="PageContent">
             </Grid>
         </ScrollViewer>

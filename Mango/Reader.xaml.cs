@@ -44,21 +44,22 @@ namespace Mango
 
 
             this.WindowState = System.Windows.WindowState.Maximized;
-            NextBtn.IsEnabled = false;
-            PreviousBtn.IsEnabled = false;
-            NextBtn.Content = "Loading..";
-            PreviousBtn.Content = "Loading..";
+            //NextBtn.IsEnabled = false;
+            //PreviousBtn.IsEnabled = false;
+            //NextBtn.Content = "Loading..";
+            //PreviousBtn.Content = "Loading..";
             new Thread(new ThreadStart(Setup)).Start();
         }
 
         bool pressed = false;
         void Reader_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Left)
+            if (!pressed) return;
+            if (e.Key == Key.Left || e.Key == Key.PageDown || e.Key == Key.End)
             {
                 Previous();
             }
-            else if (e.Key == Key.Right)
+            else if (e.Key == Key.Right || e.Key == Key.PageUp || e.Key == Key.Home)
             {
                 Next();
             }
@@ -66,7 +67,7 @@ namespace Mango
 
         void Reader_KeyDown(object sender, KeyEventArgs e)
         {
-            pressed = e.Key == Key.Left || e.Key == Key.Right;
+            pressed = e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Home || e.Key == Key.PageDown || e.Key == Key.PageUp || e.Key == Key.End;
         }
 
         private string GetTitle()
@@ -87,12 +88,14 @@ namespace Mango
             Dispatcher.Invoke(new Action(delegate
             {
                 manga.Display(PageContent);
+                Scroller.ScrollToVerticalOffset(0);
+                Scroller.ScrollToHorizontalOffset(0);
                 this.Title = GetTitle();
                 PageContent.Visibility = System.Windows.Visibility.Visible;
                 Loader.Visibility = System.Windows.Visibility.Hidden;
             }));
 
-            try
+            /*try
             {
                 if (manga.HasNext())
                 {
@@ -134,7 +137,7 @@ namespace Mango
                     }));
                 }
             }
-            catch {  }
+            catch {  }*/
         }
 
         private async void Next()
@@ -145,10 +148,10 @@ namespace Mango
             if (result.Result)
             {
                 PageContent.Visibility = System.Windows.Visibility.Hidden;
-                NextBtn.IsEnabled = false;
-                PreviousBtn.IsEnabled = false;
-                NextBtn.Content = "Loading..";
-                PreviousBtn.Content = "Loading..";
+                //NextBtn.IsEnabled = false;
+                //PreviousBtn.IsEnabled = false;
+                //NextBtn.Content = "Loading..";
+                //PreviousBtn.Content = "Loading..";
                 new Thread(new ThreadStart(Setup)).Start();
             }
             else
@@ -165,10 +168,10 @@ namespace Mango
             if (result.Result)
             {
                 PageContent.Visibility = System.Windows.Visibility.Hidden;
-                NextBtn.IsEnabled = false;
-                PreviousBtn.IsEnabled = false;
-                NextBtn.Content = "Loading..";
-                PreviousBtn.Content = "Loading..";
+                //NextBtn.IsEnabled = false;
+                //PreviousBtn.IsEnabled = false;
+                //NextBtn.Content = "Loading..";
+                //PreviousBtn.Content = "Loading..";
                 new Thread(new ThreadStart(Setup)).Start();
             }
             else
