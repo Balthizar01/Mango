@@ -18,6 +18,8 @@ using Mango.Core.Model;
 using Mango.Core.Database;
 using Mango.Core.Database.Impl;
 using System.Threading;
+using MahApps.Metro.Controls.Dialogs;
+using System.IO;
 using System.Windows.Controls.Primitives;
 
 namespace Mango
@@ -27,8 +29,14 @@ namespace Mango
     /// </summary>
     public partial class MainWindow
     {
+        public class Request
+        {
+            public Mango.Core.Model.Manga manga;
+            public MangaBox box;
+        }
         private static readonly MangaDatabase[] DATABASE = new MangaDatabase[] {
-            new MangaReaderDatabase()
+            new MangaReaderDatabase(),
+            new MangaHereDatabase()
         };
 
         private bool searching;
@@ -47,6 +55,7 @@ namespace Mango
         UniformGrid grid;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            AlertUpdates();
             if (MangaList.List.Count == 0)
             {
                 Content.Children.Add(FragmentHelper.ExtractUI<NoManga>());
@@ -75,6 +84,24 @@ namespace Mango
             }
         }
 
+        private async void AlertUpdates()
+        {
+            if (!Directory.Exists("mangas"))
+                Directory.CreateDirectory("mangas");
+
+            if (!File.Exists("mangas/u1"))
+            {
+                await this.ShowMessageAsync("What's New?", "* Redesigned Main Menu\n* Added new back and foward buttons in Reader\n* Page up, Page down, Home, and End buttons now function as foward and backwards", MessageDialogStyle.Affirmative);
+                File.WriteAllBytes("mangas/u1", new byte[] { 1 });
+            }
+            else if (!File.Exists("mangas/u2"))
+            {
+
+                await this.ShowMessageAsync("What's New?", "* Added MangaHere to search\n* Fixed buttons on reader page\n", MessageDialogStyle.Affirmative);
+                File.WriteAllBytes("mangas/u2", new byte[] { 1 });
+            }
+        }
+
         private void AddMangaTile(Manga m)
         {
             MangaBox box = new MangaBox();
@@ -90,7 +117,7 @@ namespace Mango
             {
                 Reader read = new Reader(m);
                 read.Show();
-                this.Close();
+                this.Hide();
             };
             this.grid.Children.Add(tile);
 
@@ -105,13 +132,6 @@ namespace Mango
             MessageBox.Show("Started test download");
             List<Manga> search = await new Mango.Core.Database.Impl.MangaReaderDatabase().Search("madoka");
             search[0].Download();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Search search = new Search();
-            search.Show();
-            this.Close();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -149,7 +169,7 @@ namespace Mango
         }
 
         List<Request> request = new List<Request>();
-        private void AddMangaSearchTile(Manga m)
+        private void AddMangaSearchTile(Manga m, ImageSource img)
         {
             MangaBox box = new MangaBox();
             box.MangaTitle = m.Title;
@@ -164,14 +184,11 @@ namespace Mango
             {
                 Reader read = new Reader(m);
                 read.Show();
-                this.Close();
+                this.Hide();
             };
             Tiles.Children.Add(tile);
 
-            Request request = new Request();
-            request.manga = m;
-            request.box = box;
-            this.request.Add(request);
+            box.MangaCover = img;
         }
 
         private async void SearchForManga()
@@ -190,9 +207,10 @@ namespace Mango
                 {
                     foreach (Manga m in lastResult)
                     {
-                        Dispatcher.Invoke(new Action(delegate
+                        ImageSource img = m.GetCover();
+                        Dispatcher.BeginInvoke(new Action(delegate
                         {
-                            AddMangaSearchTile(m);
+                            AddMangaSearchTile(m, img);
                         }));
                     }
                 }
@@ -204,9 +222,10 @@ namespace Mango
             {
                 foreach (Manga m in lastResult)
                 {
-                    Dispatcher.Invoke(new Action(delegate
+                    ImageSource img = m.GetCover();
+                    await Dispatcher.BeginInvoke(new Action(delegate
                     {
-                        AddMangaSearchTile(m);
+                        AddMangaSearchTile(m, img);
                     }));
                 }
             }
@@ -217,26 +236,12 @@ namespace Mango
                 ScrollView.Content = element;
             }
 
-
-            new Thread(new ThreadStart(delegate
+            Dispatcher.Invoke(new Action(delegate
             {
-                foreach (Request request in this.request)
-                {
-                    ImageSource img = request.manga.GetCover();
-                    Dispatcher.BeginInvoke(new Action(delegate
-                    {
-                        request.box.MangaCover = img;
-                    }));
-                    Thread.Sleep(10);
-                }
-
-                Dispatcher.Invoke(new Action(delegate
-                {
-                    SearchBtn.Content = "Search";
-                    Loader.Visibility = System.Windows.Visibility.Hidden;
-                    searching = false;
-                }));
-            })).Start();
+                SearchBtn.Content = "Search";
+                Loader.Visibility = System.Windows.Visibility.Hidden;
+                searching = false;
+            }));
         }
     }
 }

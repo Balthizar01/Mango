@@ -14,6 +14,7 @@ namespace Mango
     /// </summary>
     public partial class App : Application
     {
+        public static MainWindow Window;
         public static bool CacheImages
         {
             get
@@ -41,9 +42,38 @@ namespace Mango
             }
         }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            if (!IsNet45OrNewer())
+            {
+                Mango.Core.WrongNet window = new Core.WrongNet();
+                window.Show();
+            }
+            else
+            {
+                MangaList.Load();
+                Window = new Mango.MainWindow();
+                Window.Show();
+            }
+        }
+
+
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             MangaList.Load();
+        }
+
+        public static bool IsNet45OrNewer()
+        {
+            // Class "ReflectionContext" exists from .NET 4.5 onwards.
+            return Type.GetType("System.Reflection.ReflectionContext", false) != null;
+        }
+
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+
         }
     }
 }

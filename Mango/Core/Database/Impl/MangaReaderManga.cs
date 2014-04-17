@@ -652,6 +652,29 @@ namespace Mango.Core.Database.Impl
         {
             get { return File.Exists("mangas/" + MakeValidFileName(Title) + "/completed.dat"); }
         }
+
+        public override int CurrentVolume
+        {
+            get
+            {
+                return 0;
+            }
+            internal set
+            {
+            }
+        }
+
+        public override bool UsesVolumes
+        {
+            get
+            {
+                return false;
+            }
+            internal set
+            {
+                
+            }
+        }
     }
 }
 

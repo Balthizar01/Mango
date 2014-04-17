@@ -31,6 +31,7 @@ namespace Mango
             this.Closed += delegate
             {
                 MangaList.Save();
+                App.Window.Show();
             };
         }
 
@@ -41,7 +42,8 @@ namespace Mango
 
             this.KeyDown += Reader_KeyDown;
             this.KeyUp += Reader_KeyUp;
-
+            PageContent.KeyUp += PageContent_KeyUp;
+            PageContent.KeyDown += PageContent_KeyDown;
 
             this.WindowState = System.Windows.WindowState.Maximized;
             //NextBtn.IsEnabled = false;
@@ -51,23 +53,58 @@ namespace Mango
             new Thread(new ThreadStart(Setup)).Start();
         }
 
+        private bool pressed2;
+        void PageContent_KeyDown(object sender, KeyEventArgs e)
+        {
+            pressed2 = e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Home || e.Key == Key.PageDown || e.Key == Key.PageUp || e.Key == Key.End;
+        }
+
+        void PageContent_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!pressed) return;
+            if (e.Key == Key.Left || e.Key == Key.End)
+            {
+                Previous();
+            }
+            else if (e.Key == Key.Right || e.Key == Key.Home)
+            {
+                Next();
+            }
+            else if (e.Key == Key.PageUp)
+            {
+                Scroller.ScrollToVerticalOffset(0);
+            }
+            else if (e.Key == Key.PageDown)
+            {
+                Scroller.ScrollToBottom();
+            }
+        }
+
         bool pressed = false;
         void Reader_KeyUp(object sender, KeyEventArgs e)
         {
             if (!pressed) return;
-            if (e.Key == Key.Left || e.Key == Key.PageDown || e.Key == Key.End)
+            if (e.Key == Key.Left || e.Key == Key.End)
             {
                 Previous();
             }
-            else if (e.Key == Key.Right || e.Key == Key.PageUp || e.Key == Key.Home)
+            else if (e.Key == Key.Right || e.Key == Key.Home)
             {
                 Next();
+            }
+            else if (e.Key == Key.PageUp)
+            {
+                Scroller.ScrollToVerticalOffset(0);
+            }
+            else if (e.Key == Key.PageDown)
+            {
+                Scroller.ScrollToBottom();
             }
         }
 
         void Reader_KeyDown(object sender, KeyEventArgs e)
         {
-            pressed = e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Home || e.Key == Key.PageDown || e.Key == Key.PageUp || e.Key == Key.End;
+            pressed = e.Key == Key.Left || e.Key == Key.Right || e.Key == Key.Home || e.Key == Key.End || e.Key == Key.PageUp || e.Key == Key.PageDown;
         }
 
         private string GetTitle()
@@ -87,6 +124,7 @@ namespace Mango
             manga.PrepareDisplay();
             Dispatcher.Invoke(new Action(delegate
             {
+                PageContent.Children.Clear(); //In case it didn't get cleared..?
                 manga.Display(PageContent);
                 Scroller.ScrollToVerticalOffset(0);
                 Scroller.ScrollToHorizontalOffset(0);
@@ -192,8 +230,7 @@ namespace Mango
 
         private void BackBtn_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow main = new MainWindow();
-            main.Show();
+            App.Window.Show();
             this.Close();
         }
 
